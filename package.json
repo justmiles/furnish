@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "coffee-script": "^1.10.0"
+    "coffee-script": "^1.10.0",
+    "decompress": "^3.0.0",
+    "mkdirp": "^0.5.1"
   }
 }

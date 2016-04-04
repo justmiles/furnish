@@ -1,7 +1,5 @@
+furnish = require '../index.js'
 
+furnish.package 'slack'
 
-module.exports = (box) ->
-
-  box.slack = 'installed'
-
-  box.package 'slack'
+console.log Object.keys furnish
