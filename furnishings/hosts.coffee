@@ -1,4 +1,4 @@
-furnish = require '../index.js'
+furnish = require 'furnish'
 request = require 'request'
 fs      = require 'fs'
 
@@ -17,5 +17,5 @@ fs.readFile hostsFile, (err, content) ->
 
     furnish.file
       file: hostsFile
-      content: content.toString().replace /##DEVOPS-START##(.|\n)*##DEVOPS-END##/, body
+      content: content.toString().replace /##DEVOPS-START##(.|\n)*##DEVOPS-END##/, '##DEVOPS-START##\n' + body + '\n##DEVOPS-END##\n'
     , errhandler

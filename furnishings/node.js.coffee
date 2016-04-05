@@ -1,4 +1,4 @@
-furnish = require '../index.js'
+furnish = require 'furnish'
 async   = require 'async'
 
 
