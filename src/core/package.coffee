@@ -11,20 +11,30 @@
 #   windows support
 #   brew (osx) support
 
+Resource    = require '../lib/Resource'
 
 module.exports = (options = {}, callback = ->) ->
+  furnish = @
 
   install = options if typeof options == 'string'
-  exec = require('child_process').exec
 
-  if /^http/.test install
-    console.log 'attempting to install a remote package'
+  actions =  
+      nothing: ->
+        do callback
+        furnish.events.emit "package:nothing:#{name}"
+        
+      create: ->
+        exec = require('child_process').exec
 
-  console.log "apt-get install #{install}"
+        if /^http/.test install
+          console.log 'attempting to install a remote package'
 
-  exec "apt-get install #{install}", (error, stdout, stderr) ->
-    callback error if error
-    console.log stdout
-    console.log stderr
-    # if error
-    #   console.log error
+        console.log "apt-get install #{install}"
+
+        exec "apt-get install #{install}", (error, stdout, stderr) ->
+          callback error if error
+          console.log stdout
+          console.log stderr
+          furnish.events.emit "package:nothing:#{name}"
+
+  new Resource @events, 'package', name, options, actions

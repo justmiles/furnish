@@ -22,12 +22,23 @@
 mkdirp = require 'mkdirp'
 fs = require 'fs'
 ejs = require 'ejs'
+Resource = require '../lib/Resource'
 
-module.exports = (options = {}, callback = ->) ->
+module.exports = (name, options = {}, callback = ->) ->
+    furnish = @
 
-  if typeof  options.content == 'object'
-    return callback 'no template provided!' unless options.template
-    console.log 'creating object'
-    options.content = ejs.render(options.template, options.content, options)
+    actions =  
+        nothing: ->
+          do callback
+          furnish.events.emit "file:nothing:#{name}"
+          
+        create: ->
+            if typeof options.content == 'object'
+                return callback 'no template provided!' unless options.template
+                console.log 'creating object'
+                options.content = ejs.render(options.template, options.content, options)
 
-  fs.writeFile options.file, options.content, callback
+            fs.writeFile options.file, options.content, callback
+            furnish.events.emit "file:create:#{name}"
+            
+    new Resource @events, 'file', name, options, actions
