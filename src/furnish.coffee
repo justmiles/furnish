@@ -17,8 +17,8 @@ class Furnish
 
     @ranList = []
     @runList = {}
-    @events.onAny (event) ->
-      console.log "EVENT   - - #{this.event}"
+    # @events.onAny (event) ->
+    #   console.log "EVENT   - - #{this.event}"
       
   _loadFurnisher: (file) ->
     packageName = path.basename(file).replace /\.[^/.]+$/, ''

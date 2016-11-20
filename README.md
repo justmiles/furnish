@@ -7,12 +7,14 @@ npm install -g furnish
 cd examples
 furnish run node.js.coffee
 ```
-# Goals
+
+# Goals and TODOs
 * Furnish CLI is easy to use. Pass it a directory, node.js script, or git repo to provision the plan
 * Package Node.js in the CLI
 * Wrap the methods for retreiving configuration in an adapter.
 * Adapter should support triggering events 
 * Provide the tool as both a CLI and a library for other node.js projects
+* Documentation. Document all the things with a doc generator.
 
 ## Example CLI Goals
 ```
@@ -37,4 +39,11 @@ module.exports = (machine) ->
   furnish 'directory'
     path: '/letest'
 
+```
+
+## Configuration Schema
+```
+{ 
+  "": ""
+}
 ```
