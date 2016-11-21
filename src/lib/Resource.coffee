@@ -18,43 +18,46 @@ class Resource
   # @property [EventEmitter] The event emitter
   emitter: null
   
+  # @property [EventEmitter] The event emitter
+  action: 'nothing'
+  
       
   # @property [EventEmitter] The event emitter
   constructor: ->
     @resourceName = @.constructor.name
       
     for option in @options
-      if @[option]?
-        console.log "Updating #{@[option]} to #{option}"
-        @[option] = option
+      @[option] = option
     
     if @options.subscribes
       @_subscribe @options.subscribes[0], @options.subscribes[1]
     
+    unless @[@action]
+      throw new Error "Resource #{@resourceName} has no action #{@action}"
     @_onLoad @options.action
  
  
   emit: (action = 'nothing') ->
-    @emitter.emit "#{@resourceName}:#{action}:#{@name}"
-    msg = "#{@resourceName}::#{action}  -  #{@name} (Finished)"
+    msg = "[#{@resourceName}]::#{action}  -  #{@name} (Finished)"
     unless action == 'nothing'
       msg += "\nConverged #{@resourceName} with action '#{action}' for '#{@name}'"
       for key,option of @options
         msg +=  "\n     #{key}: #{option}"
-    console.log msg
+    console.log(msg)
+    @emitter.emit "#{@resourceName}:#{action}:#{@name}"
     
   callback: ->
     return null
     
   _onLoad: (action) ->
     resource = @
-    console.log "#{@resourceName} Onload action for #{@resourceName} is #{@options.action}"    
+    console.log "[#{@resourceName}] Onload action for #{@resourceName} is #{@options.action}"    
     @emitter.on "furnishings_loaded", ->
       do resource[action]
   
   _subscribe: (action, subscription) ->
     resource = @
-    console.log "#{@resourceName} Subscribing #{@resourceName}:#{action}:#{@name} to #{subscription}"
+    console.log "[#{@resourceName}] Subscribing #{@resourceName}:#{action}:#{@name} to #{subscription}"
     @emitter.on subscription, ->
       console.log "#{resource.resourceName}::#{action}  -  #{resource.name} (Beginning)"
       do resource[action]

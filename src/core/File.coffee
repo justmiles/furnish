@@ -42,13 +42,19 @@ class File extends Resource
     super()
     
   create: ->
-      if @typeof options.content == 'object'
+      unless @options.content? 
+        throw new Error "Resource #{@resourceName} requires the 'content' option."
+      
+      if typeof @options.content == 'object'
           return callback 'no template provided!' unless @options.template
           console.log 'creating object'
           @options.content = ejs.render(@options.template, @options.content, @options)
 
-      fs.writeFile @options.file, @options.content, callback
+      fs.writeFile @options.file, @options.content, @callback
       @.emit 'create'
+    
+  delete: ->
+      fs.unlink @options.path, @callback
   
 module.exports = (name, options, callback ) ->
-  new Extract @events, name, options, callback
+  new File @events, name, options, callback

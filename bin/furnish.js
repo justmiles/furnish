@@ -13,7 +13,7 @@ furnish.events.on('loaded', function() {
 
 program
   .version(pkg.version)
-  .command('run [path]')
+  .command('*')
   .description('Run furnish against the path or file')
   .action(function(loadPath){
     console.log('furnishing %s with "%s"', os.hostname(), loadPath);

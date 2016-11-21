@@ -39,6 +39,10 @@ class Extract extends Resource
         
   # @todo document this
   extract: ->
+    f = @
+    done = ->
+      f.emit 'extract'
+      
     if /tar$/.test @options.path
       new Decompress()
       .src(@options.path)
@@ -48,18 +52,20 @@ class Extract extends Resource
 
     else if /tar.xz$/.test @options.path
       cp = require 'child_process'
-      command = "tar xf #{@options.path} --strip-components=#{@strip} -C #{@options.destination}"
+      command = "tar xf #{@options.path} --strip-components=#{@options.strip} -C #{@options.destination}"
       console.log command
       cp.exec command, (error, stdout, stderr) ->
         console.log stdout
         console.log stderr
         console.log error if error
+        do done
 
     else if /tar.gz$/.test @options.path
       new Decompress()
         .src(@options.path)
         .dest('dest')
         .use(Decompress.targz(@options))
+        .run(done)
         .run(@callback)
 
     else if /zip$/.test @options.path
@@ -67,12 +73,11 @@ class Extract extends Resource
       .src(@options.path)
       .dest('dest')
       .use(Decompress.zip(@options))
+      .run(done)
       .run(@callback)
 
     else
       @callback("I don't know how to extract #{@options.path}")
-      
-    @emit 'extract'
-  
+        
 module.exports = (name, options, callback ) ->
   new Extract @events, name, options, callback

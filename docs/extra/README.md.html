@@ -40,11 +40,11 @@ cd examples
 furnish run node.js.coffee
 </code></pre><h1 id="goals-and-todos">Goals and TODOs</h1>
 <ul>
-<li>Furnish CLI is easy to use. Pass it a directory, node.js script, or git repo to provision the plan</li>
-<li>Package Node.js in the CLI</li>
-<li>Wrap the methods for retreiving configuration in an adapter.</li>
-<li>Adapter should support triggering events </li>
-<li>Provide the tool as both a CLI and a library for other node.js projects</li>
+<li>Furnish CLI should be easy to use. Pass it a directory, path to a script, or git repo to provision the plan</li>
+<li>Build an all inclusive CLI with Node.js baked in (nexe?)</li>
+<li>Wrap configuration methods in a class that is extended by various adapters. Default adapter could be a JSON file on the filesystem, while more advanced ones use Consul, FireBase, or MongoDB as the key/value store.</li>
+<li>Adapters should support triggering events (ie, resources can subscribe to a configuration key)</li>
+<li>Separate the CLI from the main Furnish library</li>
 <li>Documentation. Document all the things with a doc generator.</li>
 </ul>
 <h2 id="example-cli-goals">Example CLI Goals</h2>
@@ -66,7 +66,60 @@ module.exports = (machine) -&gt;
     path: &#39;/letest&#39;
 </code></pre><h2 id="configuration-schema">Configuration Schema</h2>
 <pre><code>{ 
-  &quot;&quot;: &quot;&quot;
+  &quot;resources&quot; : {
+    # Resource specific defaults
+  },
+  &quot;environments&quot; : {
+    &quot;development&quot; : {
+      # Environment specific overrides
+    }
+  },
+  &quot;machines&quot; : {
+    &quot;hello-machine.local&quot; : {
+      # Machine specific overrides
+    }
+  }
+}
+</code></pre><p>When furnish accesses keys from the config data store resources are loaded first, followed by environment and then machine configs. In others words, resource configs are trumped by environment configs. Environment configs are trumped by machine specific configs. Example:</p><pre><code>{ 
+  &quot;resources&quot; : {
+    &quot;node.js&quot; : {
+      &quot;version&quot; : &quot;v4.2.2&quot;
+    },
+    &quot;myApp&quot; : {
+      &quot;version&quot; : &quot;latest&quot;
+    }
+  },
+  &quot;environments&quot; : {
+    &quot;development&quot; : {
+      &quot;myApp&quot; : {
+        &quot;version&quot; : &quot;1.0.0&quot;
+      }
+    }
+  },
+  &quot;machines&quot; : {
+    &quot;hello-machine.local&quot; : {},
+    &quot;hello-machine-two.local&quot; : {
+      &quot;myApp&quot; : {
+        &quot;version&quot; : &quot;1.0.1&quot;
+      }
+    }
+  }
+}
+</code></pre><p>hello-machine&#39;s configs would look like this:</p><pre><code>{ 
+  &quot;node.js&quot; : {
+    &quot;version&quot; : &quot;v4.2.2&quot;
+  },
+  &quot;myApp&quot; : {
+    &quot;version&quot; : &quot;1.0.0&quot;
+  }
+}
+</code></pre><p>hello-machine-two&#39;s configs would look like this:</p><pre><code>{ 
+  &quot;node.js&quot; : {
+    &quot;version&quot; : &quot;v4.2.2&quot;
+  },
+  &quot;myApp&quot; : {
+    &quot;version&quot; : &quot;1.0.1&quot;
+  }
 }
 </code></pre>
       </div>
