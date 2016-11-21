@@ -5,7 +5,7 @@ Furnish your machines with real-time configuration management.
 ```
 npm install -g furnish
 cd examples
-furnish run node.js.coffee
+furnish node.js.coffee
 ```
 
 # Goals and TODOs
