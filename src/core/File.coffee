@@ -1,3 +1,5 @@
+'use strict'
+
 # Description:
 #   Writes a file
 #
@@ -39,8 +41,10 @@ class File extends Resource
   action: 'create'
     
   constructor: (@emitter, @name, @options, @callback = ->) ->    
+    @options.file or= @name
+    console.log 'test'
     super()
-    
+
   create: ->
       unless @options.content? 
         throw new Error "Resource #{@resourceName} requires the 'content' option."
@@ -49,8 +53,10 @@ class File extends Resource
           return callback 'no template provided!' unless @options.template
           console.log 'creating object'
           @options.content = ejs.render(@options.template, @options.content, @options)
-
-      fs.writeFile @options.file, @options.content, @callback
+      
+      fs.writeFile @options.file, @options.content, (err, res) ->
+        throw err if err
+        
       @.emit 'create'
     
   delete: ->

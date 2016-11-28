@@ -1,4 +1,3 @@
 
-
-module.exports = (furnish, node, callback) ->
+module.exports = (furnish) ->
   furnish.log 'loading slack'

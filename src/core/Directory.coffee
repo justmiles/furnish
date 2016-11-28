@@ -1,3 +1,5 @@
+'use strict'
+
 # Description:
 #   Extracts, packs, or parses a tar
 #
@@ -34,8 +36,10 @@ class Directory extends Resource
   
   emitter: null
   
+  action: 'create'
+  
   constructor: (@emitter, @name, @options = {}, @callback = ->) ->
-    @options.action or= 'create'
+    @options.path or= @name
     @actions  = [
       'create'
       'delete'

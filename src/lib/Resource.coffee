@@ -31,10 +31,10 @@ class Resource
     
     if @options.subscribes
       @_subscribe @options.subscribes[0], @options.subscribes[1]
-    
+
     unless @[@action]
       throw new Error "Resource #{@resourceName} has no action #{@action}"
-    @_onLoad @options.action
+    do @_onLoad
  
  
   emit: (action = 'nothing') ->
@@ -49,11 +49,11 @@ class Resource
   callback: ->
     return null
     
-  _onLoad: (action) ->
+  _onLoad: () ->
     resource = @
     console.log "[#{@resourceName}] Onload action for #{@resourceName} is #{@options.action}"    
     @emitter.on "furnishings_loaded", ->
-      do resource[action]
+      do resource[resource.action]
   
   _subscribe: (action, subscription) ->
     resource = @

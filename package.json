@@ -17,7 +17,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs": "./node_modules/codo/bin/codo -o docs src README.md; ./node_modules/docco/bin/docco examples/* -o docs/examples"
+    "docs": "./node_modules/codo/bin/codo -o docs src README.md; ./node_modules/docco/bin/docco examples/* -o docs/examples",
+    "postinstall" : "node -e \"var s='../src',d='node_modules/src',fs=require('fs');fs.exists(d,function(e){e||fs.symlinkSync(s,d,'dir')});\"",
+    "build": "grunt build"
   },
   "license": "GNU GENERAL PUBLIC LICENSE",
   "dependencies": {
@@ -32,7 +34,11 @@
   },
   "devDependencies": {
     "codo": "^2.1.2",
-    "docco": "^0.7.0"
+    "docco": "^0.7.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-nexe": "^0.1.0"
   },
   "keywords": [
     "furnish",
@@ -43,5 +49,21 @@
   ],
   "engines": {
     "node": ">=4.x"
+  },
+  "nexe": {
+    "input": "./index.js",
+    "output": "furnish^$",
+    "temp": "build",
+    "browserify": {
+      "requires": [],
+      "excludes": [],
+      "paths": []
+    },
+    "runtime": {
+      "framework": "node",
+      "version": "4.2.2",
+      "js-flags": "--use_strict",
+      "ignoreFlags": true
+    }
   }
 }

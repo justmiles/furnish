@@ -1,3 +1,5 @@
+'use strict'
+
 fs    = require 'fs'
 path  = require 'path'
 async = require 'async'
@@ -5,8 +7,17 @@ async = require 'async'
 {EventEmitter}  = require 'events'
 
 corePath = path.resolve __dirname, 'core'
+coreModules = 
+  Directory:  require './core/Directory'
+  Extract:    require './core/Extract'
+  File:       require './core/File'
+  Package:    require './core/Package'
+  RemoteFile: require './core/RemoteFile'
 
 class Furnish
+  
+  runList: {}
+  
   constructor: ->
     @events = new EventEmitter2
       wildcard: true,
@@ -14,37 +25,32 @@ class Furnish
       newListener: false,
       maxListeners: 2000,
       verboseMemoryLeak: true
-
-    @ranList = []
-    @runList = {}
-    # @events.onAny (event) ->
-    #   console.log "EVENT   - - #{this.event}"
-      
-  _loadFurnisher: (file) ->
-    packageName = path.basename(file).replace /\.[^/.]+$/, ''
-    @[packageName] = require file unless @[packageName]?
-    @events.emit "loaded:furnisher:#{packageName}"
-    @log "Furnish::#{packageName} loaded"
-
+    
+    if process.env['DEBUG']?
+      @events.onAny (event) ->
+        console.log "EVENT   - - #{this.event}"
+     
   _loadCoreFurnishers: () ->
     @log 'Loading core methods'
-    @events.emit "event.test"
-    for file in fs.readdirSync corePath
-      @_loadFurnisher path.resolve corePath, file
+    for coreModule, theFunction of coreModules
+      @[coreModule] = theFunction unless @[coreModule]?
+      @events.emit "loaded:furnisher:#{coreModule}"
+      @log "Furnish::#{coreModule} loaded"
 
   loadExternalFurnishers: (path) ->
     @log "loading external methods"
     for file in fs.readdirSync path
       @_loadFurnisher path.resolve path, file
 
-  load: (directory) ->
-    f = @
+  load: (loadPath) ->
     @_loadCoreFurnishers()
-    @loadRunList(directory)
+    @loadRunList loadPath
 
   loadFile: (file) ->
+    @log "loading file #{file}"
     packageName = file.replace /\.[^/.]+$/, ''
-    @runList[packageName] = require(file)
+    unless @runList[packageName]?
+      @runList[packageName] = require file
     @log "#{packageName} added to run list"
 
   loadRunList: (loadPath) ->
@@ -54,7 +60,7 @@ class Furnish
       for file in fs.readdirSync loadPath
         @loadFile(path.resolve loadPath, file)
     else
-      @loadFile(path.resolve loadPath)
+      @loadFile loadPath
 
     @log 'loaded'
     @events.emit 'loaded'
@@ -65,6 +71,7 @@ class Furnish
 
     async.forEachOf @runList, (furnisher, name, cb) ->
       furnish.log "Furnishing #{name}"
+      console.log furnisher
       furnish.logspace = name
       try
         furnisher furnish

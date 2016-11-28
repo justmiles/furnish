@@ -1,3 +1,5 @@
+'use strict'
+
 # Description:
 #   Downloads a remote file.
 #

@@ -1,3 +1,5 @@
+'use strict'
+
 # Description:
 #   Extracts, packs, or parses a tar
 #
