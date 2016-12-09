@@ -20,6 +20,16 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="hosts.html">
+                  hosts.coffee
+                </a>
+              
+                
+                <a class="source" href="hosts.html">
+                  hosts.js
+                </a>
+              
+                
                 <a class="source" href="index.html">
                   index.md
                 </a>
@@ -59,16 +69,22 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
+config = 
+  nodejs:
+    version: process.env[<span class="hljs-string">'NODE_VERSION'</span>] <span class="hljs-keyword">or</span> <span class="hljs-string">'v4.4.2'</span>
+    
+config.nodejs.install_location = <span class="hljs-string">"/tmp/nodejs/<span class="hljs-subst">#{config.nodejs.version}</span>"</span>
+
 <span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">(furnish)</span> -&gt;</span>
   
     furnish.Directory <span class="hljs-string">"Create Node.js Dir"</span>, {
-        path: <span class="hljs-string">'/tmp/local/nodejs'</span>
+        path: config.nodejs.install_location
         action: <span class="hljs-string">'create'</span>
     }
     
     furnish.RemoteFile <span class="hljs-string">"Download Node.js"</span>, {
-        source: <span class="hljs-string">'https://nodejs.org/dist/v4.4.2/node-v4.4.2-linux-x64.tar.xz'</span>
-        destination: <span class="hljs-string">'/tmp/local/nodejs/node-v4.4.2-linux-x64.tar.xz'</span>
+        source: <span class="hljs-string">"https://nodejs.org/dist/<span class="hljs-subst">#{config.nodejs.version}</span>/node-<span class="hljs-subst">#{config.nodejs.version}</span>-linux-x64.tar.xz"</span>
+        destination: <span class="hljs-string">"<span class="hljs-subst">#{config.nodejs.install_location}</span>/node-<span class="hljs-subst">#{config.nodejs.version}</span>-linux-x64.tar.xz"</span>
         owner: <span class="hljs-string">'justmiles'</span>
         group: <span class="hljs-string">'justmiles'</span>
         mode: <span class="hljs-string">'0755'</span>
@@ -76,11 +92,18 @@
         subscribes: [ <span class="hljs-string">'create'</span>, <span class="hljs-string">"Directory:create:Create Node.js Dir"</span> ]
     }
     
-    furnish.Extract <span class="hljs-string">"Extract Node.js"</span>, {
-        path: <span class="hljs-string">'/tmp/local/nodejs/node-v4.4.2-linux-x64.tar.xz'</span>
-        destination: <span class="hljs-string">'/tmp/local/nodejs'</span>
+    furnish.Extract <span class="hljs-string">"Deploy Node.JS"</span>, {
+        path: <span class="hljs-string">"<span class="hljs-subst">#{config.nodejs.install_location}</span>/node-<span class="hljs-subst">#{config.nodejs.version}</span>-linux-x64.tar.xz"</span>
+        destination: config.nodejs.install_location
+        strip: <span class="hljs-number">1</span>
         action: <span class="hljs-string">'nothing'</span>
         subscribes: [ <span class="hljs-string">'extract'</span>, <span class="hljs-string">"RemoteFile:create:Download Node.js"</span> ]
+    }
+    
+    furnish.File <span class="hljs-string">"Delete Node.js targ.xz"</span>, {
+      path: <span class="hljs-string">"<span class="hljs-subst">#{config.nodejs.install_location}</span>/node-<span class="hljs-subst">#{config.nodejs.version}</span>-linux-x64.tar.xz"</span>
+      action: <span class="hljs-string">'nothing'</span>
+      subscribes: [ <span class="hljs-string">'delete'</span>, <span class="hljs-string">"Extract:extract:Deploy Node.JS"</span> ]
     }</pre></div></div>
             
         </li>
