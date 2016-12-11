@@ -1,0 +1,6 @@
+{
+  "nodejs": {
+    "version": "v4.4.2",
+    "install_location": "/tmp/watchednodejs"
+  }
+}

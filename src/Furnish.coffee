@@ -19,6 +19,8 @@ class Furnish
   
   runList: {}
   
+  adapter: './adapters/FS.coffee'
+  
   constructor: ->
     @events = new EventEmitter2
       wildcard: true,
@@ -31,6 +33,12 @@ class Furnish
       @events.onAny (event) ->
         console.log "EVENT   - - #{this.event}"
      
+  _loadConfig: () ->
+    @log 'Loading config'
+    AdapterImpl = require @adapter
+    @config = new AdapterImpl(@events)
+    do @config.load
+    
   _loadCoreFurnishers: () ->
     @log 'Loading core methods'
     for coreModule, theFunction of coreModules
@@ -44,6 +52,7 @@ class Furnish
       @_loadFurnisher path.resolve path, file
 
   load: (loadPath) ->
+    @_loadConfig()
     @_loadCoreFurnishers()
     @loadRunList loadPath
 
