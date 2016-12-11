@@ -55,8 +55,23 @@ class Directory extends Resource
   # @todo document this
   delete: ->
     console.log "Deleting directory #{@options.path}"
-    mkdirp @options.path, @callback
+    deleteFolderRecursive @options.path
     @emit 'delete'
+    
+# Utilities
+deleteFolderRecursive = (path) ->
+  if fs.existsSync(path)
+    fs.readdirSync(path).forEach (file, index) ->
+      curPath = path + '/' + file
+      if fs.lstatSync(curPath).isDirectory()
+        # recurse
+        deleteFolderRecursive curPath
+      else
+        # delete file
+        fs.unlinkSync curPath
+      return
+    fs.rmdirSync path
+  return
     
 module.exports = (name, options, callback ) ->
   new Directory @events, name, options, callback
