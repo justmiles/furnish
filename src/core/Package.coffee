@@ -28,14 +28,14 @@ class Package extends Resource
     exec = require('child_process').exec
     
     if /^http/.test install
-      console.log 'attempting to install a remote package'
+      f.log 'attempting to install a remote package'
 
-    console.log "apt-get install #{@install}"
+    f.log "apt-get install #{@install}"
 
     exec "apt-get install #{@install}", (error, stdout, stderr) ->
       callback error if error
-      console.log stdout
-      console.log stderr
+      f.log stdout
+      f.log stderr
       f.emit 'create'
   
 module.exports = (name, options, callback ) ->

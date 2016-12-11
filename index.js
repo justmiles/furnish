@@ -1,2 +1,2 @@
 require('coffee-script/register');
-module.exports = require('./src/furnish');
+module.exports = require('./src/Furnish');

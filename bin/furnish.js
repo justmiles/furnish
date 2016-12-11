@@ -16,9 +16,8 @@ program
   .command('*')
   .description('Run furnish against the path or file')
   .action(function(loadPath){
-    console.log('furnishing %s with "%s"', os.hostname(), loadPath);
+    console.log('Furnishing %s with "%s"', os.hostname(), loadPath);
     var loadPath = path.resolve( process.cwd(), loadPath )
-    console.log(loadPath);
     furnish.load(loadPath)
   });
 

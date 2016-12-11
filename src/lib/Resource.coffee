@@ -1,3 +1,6 @@
+
+chalk = require 'chalk'
+
 # @option option [String] name Name of the resource
 # @option option [String] action create, delete, or nothing. Defaults to 'create'
 # @option option [String] path Path to manage
@@ -24,48 +27,60 @@ class Resource
       
   # @property [EventEmitter] The event emitter
   constructor: ->
-    @resourceName = @.constructor.name
-      
+    @resourceName = chalk.blue @.constructor.name
     for option in @options
       @[option] = option
     
+    @action = chalk.cyan @action
+    @name = chalk.blue @name
     if @options.subscribes
       @_subscribe @options.subscribes[0], @options.subscribes[1]
     
-    unless @[@action]
+    unless @[chalk.stripColor(@action)]
       throw new Error "Resource #{@resourceName} has no action #{@action}"
     @_onLoad @options.action
  
  
-  emit: (action = 'nothing') ->
-    msg = "[#{@resourceName}]::#{action}  -  #{@name} (Finished)"
+  emit: (action) ->
+    msg = "#{@name} Finished #{@resourceName}::#{chalk.cyan action}"
     unless action == 'nothing'
-      msg += "\nConverged #{@resourceName} with action '#{action}' for '#{@name}'"
       for key,option of @options
         msg +=  "\n     #{key}: #{option}"
-    console.log(msg)
-    @emitter.emit "#{@resourceName}:#{action}:#{@name}"
+    console.log chalk.green(msg)
+    @emitter.emit "#{chalk.stripColor(@resourceName)}:#{action}:#{chalk.stripColor(@name)}"
     
   callback: ->
     return null
     
   _onLoad: (action) ->
     resource = @
-    console.log "[#{@resourceName}] Onload action for #{@resourceName} is #{@options.action}"    
+    @logger.debug "Onload action for '#{@name}' is #{@resourceName}::#{@action}"    
     @emitter.on "furnishings_loaded", ->
-      do resource[action]
+      console.log chalk.green "#{resource.name} Beginning #{resource.resourceName}::#{chalk.cyan action}" unless action == 'nothing'
+      do resource[chalk.stripColor(action)]
   
   _subscribe: (action, subscription) ->
     resource = @
-    console.log "[#{@resourceName}] Subscribing #{@resourceName}:#{action}:#{@name} to #{subscription}"
+    @logger.info "#{@resourceName} Subscribing [#{@resourceName}:#{chalk.cyan action}:#{@name}] to [#{subscription}]"
     @emitter.on subscription, ->
-      console.log "#{resource.resourceName}::#{action}  -  #{resource.name} (Beginning)"
-      do resource[action]
+      console.log chalk.green "#{resource.name} Beginning #{resource.resourceName}::#{chalk.cyan action}"
+      do resource[chalk.stripColor(action)]
 
   # Action nothing. Called when a resource should not converge
   # @note Emits 'nothing'
   nothing: ->
     @emit 'nothing'
     do @callback
+    
+  logger:
+    info: (msg) ->
+      console.log chalk.gray msg
+    error: (msg) ->
+      console.log chalk.red msg
+    warn: (msg) ->
+      console.log chalk.dim.yellow msg 
+    debug: (msg) ->
+      if process.env['DEBUG']?
+        console.log msg
       
 module.exports = Resource

@@ -67,20 +67,20 @@ class RemoteFile extends Resource
   # @todo document this
   create: ->
     f = @
-    return callback() if fs.existsSync(@options.destination)
+    return @callback() if fs.existsSync(@options.destination)
 
     command = "wget #{f.options.source} --output-document=#{f.options.destination}"
-    console.log command
+    f.logger.info command
     cp.exec command, (error, stdout, stderr) ->
-      console.log stdout
-      console.log stderr
-      console.log error if error
+      f.logger.info stdout
+      f.logger.warn stderr
+      f.logger.info error if error
       f.callback(null, f.options.destination)
       f.emit 'create'
 
   # @todo document this
   delete: ->
-    console.log "TODO: Deleting remote file #{@options.destination}"
+    @logger.error "TODO: Deleting remote file #{@options.destination}"
     @emit 'delete'
   
 module.exports = (name, options, callback ) ->
