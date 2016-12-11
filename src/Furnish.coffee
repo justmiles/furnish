@@ -4,9 +4,9 @@ fs    = require 'fs'
 path  = require 'path'
 async = require 'async'
 chalk = require 'chalk'
+
 {EventEmitter2} = require 'eventemitter2'
 {EventEmitter}  = require 'events'
-
 corePath = path.resolve __dirname, 'core'
 coreModules = 
   Directory:  require './core/Directory'

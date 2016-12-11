@@ -25,6 +25,9 @@ cp        = require 'child_process'
 url       = require 'url'
 os        = require 'os'
 fs        = require 'fs'
+http      = require 'http'
+https     = require 'https'
+url       = require 'url'
 Resource  = require '../lib/Resource'
 
 
@@ -68,16 +71,21 @@ class RemoteFile extends Resource
   create: ->
     f = @
     return @callback() if fs.existsSync(@options.destination)
-
-    command = "wget #{f.options.source} --output-document=#{f.options.destination}"
-    f.logger.info command
-    cp.exec command, (error, stdout, stderr) ->
-      f.logger.info stdout
-      f.logger.warn stderr
-      f.logger.info error if error
+    source = url.parse(@options.source)
+    file = fs.createWriteStream @options.destination
+    
+    if source.protocol == 'http:'
+      httpProto = http 
+    else if source.protocol == 'https:'
+      httpProto = https 
+    
+    request = httpProto.get source.href, (response) ->
+      response.pipe file
+    
+    request.on 'close', ->
       f.callback(null, f.options.destination)
       f.emit 'create'
-
+      
   # @todo document this
   delete: ->
     @logger.error "TODO: Deleting remote file #{@options.destination}"
