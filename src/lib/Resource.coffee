@@ -31,10 +31,11 @@ class Resource
     for option in @options
       @[option] = option
     
-    @action = chalk.cyan @action
+    @action = chalk.cyan @options.action
+        
     @name = chalk.blue @name
     if @options.subscribes
-      @_subscribe @options.subscribes[0], @options.subscribes[1]
+      @subscribe @options.subscribes[0], @options.subscribes[1]
     
     unless @[chalk.stripColor(@action)]
       throw new Error "Resource #{@resourceName} has no action #{@action}"
@@ -59,7 +60,7 @@ class Resource
       console.log chalk.green "#{resource.name} Beginning #{resource.resourceName}::#{chalk.cyan action}" unless action == 'nothing'
       do resource[chalk.stripColor(action)]
   
-  _subscribe: (action, subscription) ->
+  subscribe: (action, subscription) ->
     resource = @
     @logger.info "#{@resourceName} Subscribing [#{@resourceName}:#{chalk.cyan action}:#{@name}] to [#{subscription}]"
     @emitter.on subscription, ->
