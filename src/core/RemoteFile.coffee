@@ -83,6 +83,10 @@ class RemoteFile extends Resource
       response.pipe file
     
     request.on 'close', ->
+      
+      if f.options.mode?
+        cp.execSync "chmod #{f.options.mode} #{f.options.destination}"
+      
       f.callback(null, f.options.destination)
       f.emit 'create'
       

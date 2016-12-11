@@ -22,6 +22,7 @@
 mkdirp = require 'mkdirp'
 fs = require 'fs'
 ejs = require 'ejs'
+cp = require 'child_process'
 Resource = require '../lib/Resource'
 
 # @example Extract Node.js
@@ -51,6 +52,11 @@ class File extends Resource
           @options.content = ejs.render(@options.template, @options.content, @options)
 
       fs.writeFile @options.file, @options.content, @callback
+      
+            
+      if @options.mode?
+        cp.execSync "chmod #{@options.mode} #{@options.destination}"
+        
       @.emit 'create'
     
   delete: ->
