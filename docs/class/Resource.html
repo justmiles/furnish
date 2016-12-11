@@ -156,7 +156,44 @@
         <dd class='desc'>
           The event emitter 
         </dd>
+        <dt id='action-property'>
+          <span class='signature'>
+            (EventEmitter)
+            <b>
+              action
+            </b>
+          </span>
+        </dt>
+        <dd class='desc'>
+          The event emitter 
+        </dd>
       </dl>
+      <h2>Variables Summary</h2>
+      <dl class='constants'>
+  <dt id='logger-variable'>
+    logger
+    =
+  </dt>
+  <dd>
+    <pre><code class='coffeescript'>{
+  info: function(msg) {
+    return console.log(chalk.gray(msg));
+  },
+  error: function(msg) {
+    return console.log(chalk.red(msg));
+  },
+  warn: function(msg) {
+    return console.log(chalk.dim.yellow(msg));
+  },
+  debug: function(msg) {
+    if (process.env[&#39;DEBUG&#39;] != null) {
+      return console.log(msg);
+    }
+  }
+}</code></pre>
+    
+  </dd>
+</dl>
       <h2>Instance Method Summary</h2>
       <ul class='summary'>
   <li>
@@ -164,7 +201,7 @@
       <a href='#emit-dynamic'>
         #
 (void)
-<b>emit</b><span>(action = &#39;nothing&#39;)</span>
+<b>emit</b><span>(action)</span>
       </a>
     </span>
     <span class='desc'>
@@ -194,10 +231,10 @@
   </li>
   <li>
     <span class='signature'>
-      <a href='#_subscribe-dynamic'>
+      <a href='#subscribe-dynamic'>
         #
 (void)
-<b>_subscribe</b><span>(action, subscription)</span>
+<b>subscribe</b><span>(action, subscription)</span>
       </a>
     </span>
     <span class='desc'>
@@ -238,7 +275,7 @@
     <p class='signature' id='emit-dynamic'>
       #
 (void)
-<b>emit</b><span>(action = &#39;nothing&#39;)</span>
+<b>emit</b><span>(action)</span>
       <br>
     </p>
     
@@ -262,10 +299,10 @@
     
   </div>
   <div class='method_details'>
-    <p class='signature' id='_subscribe-dynamic'>
+    <p class='signature' id='subscribe-dynamic'>
       #
 (void)
-<b>_subscribe</b><span>(action, subscription)</span>
+<b>subscribe</b><span>(action, subscription)</span>
       <br>
     </p>
     
