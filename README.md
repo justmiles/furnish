@@ -16,7 +16,7 @@ furnish node.js.coffee
 * Separate the CLI from the main Furnish library
 * Documentation. Document all the things with a doc generator.
 
-## Example CLI Goals
+## CLI Goals
 ```
 # Provision machine based on scripts in directory
 furnish /path/to/directory
@@ -27,6 +27,7 @@ furnish /path/to/file.js /path/to/file.coffee
 
 
 ## Example Furnish scripts
+[View detailed examples here.](https://justmiles.github.io/furnish/examples)
 ```
 # coffee
 
