@@ -177,13 +177,13 @@
   <dd>
     <pre><code class='coffeescript'>{
   info: function(msg) {
-    return console.log(chalk.gray(msg));
+    return console.log(&#39;\t&#39; + chalk.gray(msg));
   },
   error: function(msg) {
-    return console.log(chalk.red(msg));
+    return console.log(&#39;\t&#39; + chalk.red(msg));
   },
   warn: function(msg) {
-    return console.log(chalk.dim.yellow(msg));
+    return console.log(&#39;\t&#39; + chalk.dim.yellow(msg));
   },
   debug: function(msg) {
     if (process.env[&#39;DEBUG&#39;] != null) {
@@ -231,6 +231,17 @@
   </li>
   <li>
     <span class='signature'>
+      <a href='#startAction-dynamic'>
+        #
+(void)
+<b>startAction</b><span>(action)</span>
+      </a>
+    </span>
+    <span class='desc'>
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
       <a href='#subscribe-dynamic'>
         #
 (void)
@@ -245,11 +256,22 @@
       <a href='#nothing-dynamic'>
         #
 (void)
-<b>nothing</b><span>()</span>
+<b>nothing</b><span>(reason)</span>
       </a>
     </span>
     <span class='desc'>
       Action nothing. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#error-dynamic'>
+        #
+(void)
+<b>error</b><span>(reason, stacktrace)</span>
+      </a>
+    </span>
+    <span class='desc'>
     </span>
   </li>
 </ul>
@@ -299,6 +321,15 @@
     
   </div>
   <div class='method_details'>
+    <p class='signature' id='startAction-dynamic'>
+      #
+(void)
+<b>startAction</b><span>(action)</span>
+      <br>
+    </p>
+    
+  </div>
+  <div class='method_details'>
     <p class='signature' id='subscribe-dynamic'>
       #
 (void)
@@ -311,7 +342,7 @@
     <p class='signature' id='nothing-dynamic'>
       #
 (void)
-<b>nothing</b><span>()</span>
+<b>nothing</b><span>(reason)</span>
       <br>
     </p>
     <div class='docstring'>
@@ -323,6 +354,15 @@
 </div>
 <div class='tags'>
 </div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='error-dynamic'>
+      #
+(void)
+<b>error</b><span>(reason, stacktrace)</span>
+      <br>
+    </p>
+    
   </div>
 </div>
     </div>

@@ -1,6 +1,10 @@
 # furnish
 Furnish your machines with real-time configuration management.
 
+# [Documentation](https://justmiles.github.io/furnish)
+
+# [Source](https://github.com/justmiles/furnish)
+
 # Examples
 ```
 npm install -g furnish
