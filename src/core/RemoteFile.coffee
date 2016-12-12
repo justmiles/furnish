@@ -70,7 +70,9 @@ class RemoteFile extends Resource
   # @todo document this
   create: ->
     f = @
-    return @callback() if fs.existsSync(@options.destination)
+    if fs.existsSync(@options.destination)
+      return do @nothing 
+      
     source = url.parse(@options.source)
     file = fs.createWriteStream @options.destination
     

@@ -6,14 +6,6 @@ async = require 'async'
 chalk = require 'chalk'
 
 {EventEmitter2} = require 'eventemitter2'
-{EventEmitter}  = require 'events'
-corePath = path.resolve __dirname, 'core'
-coreModules = 
-  Directory:  require './core/Directory'
-  Extract:    require './core/Extract'
-  File:       require './core/File'
-  Package:    require './core/Package'
-  RemoteFile: require './core/RemoteFile'
 
 class Furnish
   
@@ -33,6 +25,14 @@ class Furnish
      
   _loadCoreFurnishers: () ->
     @log 'Loading core methods'
+    
+    coreModules = 
+      Directory:  require './core/Directory'
+      Extract:    require './core/Extract'
+      File:       require './core/File'
+      Package:    require './core/Package'
+      RemoteFile: require './core/RemoteFile'
+      
     for coreModule, theFunction of coreModules
       @[coreModule] = theFunction unless @[coreModule]?
       @events.emit "loaded:furnisher:#{coreModule}"

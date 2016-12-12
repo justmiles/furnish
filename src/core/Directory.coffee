@@ -47,7 +47,7 @@ class Directory extends Resource
   create: ->
     f = @
     if fs.existsSync(@options.path)
-      return @emit 'nothing'
+      return @nothing 'Directory exists'
     mkdirp @options.path, ->
       f.emit 'create'
       do f.callback

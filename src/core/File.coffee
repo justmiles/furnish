@@ -47,10 +47,14 @@ class File extends Resource
         throw new Error "Resource #{@resourceName} requires the 'content' option."
       
       if typeof @options.content == 'object'
-          return callback 'no template provided!' unless @options.template
-          console.log 'creating object'
+          return @error 'no template provided!' unless @options.template
           @options.content = ejs.render(@options.template, @options.content, @options)
-
+      
+      if fs.existsSync @options.file
+        currentSize = fs.statSync(@options.file).size
+        desiredSize = Buffer.byteLength(@options.content, 'utf8')
+        if currentSize == desiredSize
+          return @nothing 'file size matches'
       fs.writeFile @options.file, @options.content, @callback
       
             

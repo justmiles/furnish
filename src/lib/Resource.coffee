@@ -43,7 +43,7 @@ class Resource
  
  
   emit: (action) ->
-    msg = "#{@name} Finished #{@resourceName}::#{chalk.cyan action}"
+    msg = "Furnished #{@resourceName} \"#{@name}\" with action #{chalk.cyan action}"
     unless action == 'nothing'
       for key,option of @options
         msg +=  "\n     #{key}: #{option}"
@@ -57,29 +57,42 @@ class Resource
     resource = @
     @logger.debug "Onload action for '#{@name}' is #{@resourceName}::#{@action}"    
     @emitter.on "furnishings_loaded", ->
-      console.log chalk.green "#{resource.name} Beginning #{resource.resourceName}::#{chalk.cyan action}" unless action == 'nothing'
-      do resource[chalk.stripColor(action)]
-  
+      resource.startAction action
+
+  startAction: (action) ->
+    console.log chalk.green "Furnishing #{@resourceName} \"#{@name}\" with action #{chalk.cyan action}"
+    try
+      do @[chalk.stripColor(action)]
+    catch err
+      @error err.message, err.stack
+      
   subscribe: (action, subscription) ->
     resource = @
     @logger.info "#{@resourceName} Subscribing [#{@resourceName}:#{chalk.cyan action}:#{@name}] to [#{subscription}]"
     @emitter.on subscription, ->
-      console.log chalk.green "#{resource.name} Beginning #{resource.resourceName}::#{chalk.cyan action}"
-      do resource[chalk.stripColor(action)]
-
+      resource.startAction action
+      
   # Action nothing. Called when a resource should not converge
   # @note Emits 'nothing'
-  nothing: ->
+  nothing: (reason) ->
+    if reason
+      @logger.info "Not furnishing #{@name}: #{reason}"
     @emit 'nothing'
+    do @callback
+    
+  error: (reason, stacktrace) ->
+    if reason
+      @logger.error "Error furnishing #{@name}: #{reason} \n#{stacktrace.split('\n').map((x)-> '\t\t' + x).join('\n')}"
+    @emit 'error'
     do @callback
     
   logger:
     info: (msg) ->
-      console.log chalk.gray msg
+      console.log '\t' + chalk.gray msg
     error: (msg) ->
-      console.log chalk.red msg
+      console.log '\t' + chalk.red msg
     warn: (msg) ->
-      console.log chalk.dim.yellow msg 
+      console.log '\t' + chalk.dim.yellow msg 
     debug: (msg) ->
       if process.env['DEBUG']?
         console.log msg
