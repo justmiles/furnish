@@ -39,7 +39,7 @@ class File extends Resource
   
   action: 'create'
     
-  constructor: (@emitter, @name, @options, @callback = ->) ->    
+  constructor: (@furnish, @name, @options, @callback = ->) ->    
     super()
     
   create: ->
@@ -61,10 +61,10 @@ class File extends Resource
       if @options.mode?
         cp.execSync "chmod #{@options.mode} #{@options.destination}"
         
-      @.emit 'create'
+      @.finish 'create'
     
   delete: ->
       fs.unlink @options.path, @callback
   
 module.exports = (name, options, callback ) ->
-  new File @events, name, options, callback
+  new File @, name, options, callback

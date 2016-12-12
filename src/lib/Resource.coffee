@@ -1,5 +1,6 @@
 
 chalk = require 'chalk'
+{EventEmitter} = require 'events'
 
 # @option option [String] name Name of the resource
 # @option option [String] action create, delete, or nothing. Defaults to 'create'
@@ -7,7 +8,7 @@ chalk = require 'chalk'
 # @option option [String] mode mode of directory
 # @option option [String] owner directory owner
 # @option option [String] group that owns directory
-class Resource
+class Resource extends EventEmitter
   
   # @property [String] the resource name
   name: {}
@@ -28,8 +29,9 @@ class Resource
   # @property [EventEmitter] The event emitter
   constructor: ->
     @resourceName = chalk.blue @.constructor.name
-    for option in @options
-      @[option] = option
+    
+    for option,value of @options
+      @[option] = value
     
     @action = chalk.cyan @options.action
         
@@ -42,13 +44,14 @@ class Resource
     @_onLoad @options.action
  
  
-  emit: (action) ->
+  finish: (action) ->
     msg = "Furnished #{@resourceName} \"#{@name}\" with action #{chalk.cyan action}"
     unless action == 'nothing'
       for key,option of @options
         msg +=  "\n     #{key}: #{option}"
     console.log chalk.green(msg)
-    @emitter.emit "#{chalk.stripColor(@resourceName)}:#{action}:#{chalk.stripColor(@name)}"
+    @furnish.events.emit "#{chalk.stripColor(@resourceName)}:#{action}:#{chalk.stripColor(@name)}"
+    @emit chalk.stripColor action
     
   callback: ->
     return null
@@ -56,7 +59,7 @@ class Resource
   _onLoad: (action) ->
     resource = @
     @logger.debug "Onload action for '#{@name}' is #{@resourceName}::#{@action}"    
-    @emitter.on "furnishings_loaded", ->
+    @furnish.events.on "furnishings_loaded", ->
       resource.startAction action
 
   startAction: (action) ->
@@ -69,7 +72,7 @@ class Resource
   subscribe: (action, subscription) ->
     resource = @
     @logger.info "#{@resourceName} Subscribing [#{@resourceName}:#{chalk.cyan action}:#{@name}] to [#{subscription}]"
-    @emitter.on subscription, ->
+    @furnish.events.on subscription, ->
       resource.startAction action
       
   # Action nothing. Called when a resource should not converge
@@ -77,13 +80,15 @@ class Resource
   nothing: (reason) ->
     if reason
       @logger.info "Not furnishing #{@name}: #{reason}"
-    @emit 'nothing'
+    @finish 'nothing'
     do @callback
     
   error: (reason, stacktrace) ->
+    if stacktrace
+      stacktrace = stacktrace.split('\n').map((x)-> '\t\t' + x).join('\n')
     if reason
-      @logger.error "Error furnishing #{@name}: #{reason} \n#{stacktrace.split('\n').map((x)-> '\t\t' + x).join('\n')}"
-    @emit 'error'
+      @logger.error "Error furnishing #{@name}: #{reason}#{'\n' + stacktrace if stacktrace}"
+    @finish 'error'
     do @callback
     
   logger:

@@ -34,14 +34,14 @@ class Extract extends Resource
   
   strip: 0
     
-  constructor: (@emitter, @name, @options, @callback = ->) ->    
+  constructor: (@furnish, @name, @options, @callback = ->) ->    
     super()
         
   # @todo document this
   extract: ->
     resource = @
     done = ->
-      resource.emit 'extract'
+      resource.finish 'extract'
       
     if /tar$/.test @options.path
       new Decompress()
@@ -79,4 +79,4 @@ class Extract extends Resource
       @error("I don't know how to extract #{@options.path}")
         
 module.exports = (name, options, callback ) ->
-  new Extract @events, name, options, callback
+  new Extract @, name, options, callback

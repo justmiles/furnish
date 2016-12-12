@@ -34,7 +34,7 @@ class Directory extends Resource
   
   emitter: null
   
-  constructor: (@emitter, @name, @options = {}, @callback = ->) ->
+  constructor: (@furnish, @name, @options = {}, @callback = ->) ->
     @options.action or= 'create'
     @actions  = [
       'create'
@@ -49,14 +49,14 @@ class Directory extends Resource
     if fs.existsSync(@options.path)
       return @nothing 'Directory exists'
     mkdirp @options.path, ->
-      f.emit 'create'
+      f.finish 'create'
       do f.callback
   
   # @todo document this
   delete: ->
     console.log "Deleting directory #{@options.path}"
     deleteFolderRecursive @options.path
-    @emit 'delete'
+    @finish 'delete'
     
 # Utilities
 deleteFolderRecursive = (path) ->
@@ -74,5 +74,5 @@ deleteFolderRecursive = (path) ->
   return
     
 module.exports = (name, options, callback ) ->
-  new Directory @events, name, options, callback
+  new Directory @, name, options, callback
   

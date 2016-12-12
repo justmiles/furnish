@@ -55,12 +55,12 @@ class RemoteFile extends Resource
   
   emitter: null
   
-  constructor: (@emitter, @name, @options = {}, @callback = ->) ->
+  constructor: (@furnish, @name, @options = {}, @callback = ->) ->
         
     throw new Error ('ensure `source` is defined') unless @options.source
     
     unless @options.destination?
-      @options.directory or= path.resolve os.tmpdir(), 'remoteFiles'
+      @options.directory or= path.resolve os.tmpdir()
       @options.saveAs or= path.basename url.parse(@options.source).pathname
       @options.destination or= path.resolve @options.directory, @options.saveAs
     
@@ -90,13 +90,13 @@ class RemoteFile extends Resource
         cp.execSync "chmod #{f.options.mode} #{f.options.destination}"
       
       f.callback(null, f.options.destination)
-      f.emit 'create'
+      f.finish 'create'
       
   # @todo document this
   delete: ->
     @logger.error "TODO: Deleting remote file #{@options.destination}"
-    @emit 'delete'
+    @finish 'delete'
   
 module.exports = (name, options, callback ) ->
-  new RemoteFile @events, name, options, callback
+  new RemoteFile @, name, options, callback
 
